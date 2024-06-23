@@ -114,6 +114,9 @@ def route(
 
             url = f'{service_url}{path}'
 
+            print("!!!!!!!!!!!!!!!!!!!!!!")
+            print(url)
+
             try:
                 resp_data, status_code_from_service = await make_request(
                     url=url,
@@ -122,6 +125,7 @@ def route(
                     headers=service_headers,
                 )
             except aiohttp.client_exceptions.ClientConnectorError:
+                print("----- ClientConnectorError -------")
                 raise HTTPException(
                     status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
                     detail='Service is unavailable.',
