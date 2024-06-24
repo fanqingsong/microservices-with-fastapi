@@ -25,5 +25,14 @@
         "user_type": "default",
         "hashed_password": "$2b$12$wf5AZPA/b4gesbPoMUcc2.BvIbGdDQFLd5SZizK9pthHo09WPf/Em",
         "created_by": 1
+    },
+    {
+        "id": 4,
+        "username": "qq",
+        "email": "qq",
+        "full_name": "qq",
+        "user_type": "user",
+        "hashed_password": "$2b$12$zftY7zTTvMZT4CjsDzZlkeIdxaiTXsZ2is7cLs2NFUD08fe1KPaI6",
+        "created_by": 1
     }
 ]

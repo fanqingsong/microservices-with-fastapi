@@ -9,6 +9,52 @@ from typing import List
 from exceptions import (AuthTokenMissing, AuthTokenExpired, AuthTokenCorrupted)
 from network import make_request
 
+from conf import settings
+from post_processing import access_token_generate_handler
+
+
+
+async def get_token_from_core(username: str, password: str, request: Request, response: Response):
+    print("called in get_token_from_core")
+
+    payload = {"username": username, "password": password}
+
+    path = "/api/login"
+    url = f'{settings.USERS_SERVICE_URL}{path}'
+
+    print("!!!!!!!!!! get_token !!!!!!!!!!!!")
+    print(url)
+
+    try:
+        resp_data, status_code_from_service = await make_request(
+            url=url,
+            method="post",
+            data=payload,
+            headers=None,
+        )
+    except aiohttp.client_exceptions.ClientConnectorError:
+        print("----- ClientConnectorError -------")
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail='Service is unavailable.',
+            headers={'WWW-Authenticate': 'Bearer'},
+        )
+    except aiohttp.client_exceptions.ContentTypeError:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail='Service error.',
+            headers={'WWW-Authenticate': 'Bearer'},
+        )
+
+    response.status_code = status_code_from_service
+
+    if all([
+        status_code_from_service == status.HTTP_200_OK or status.HTTP_201_CREATED == status_code_from_service
+    ]):
+        resp_data = access_token_generate_handler(resp_data)
+
+    return resp_data
+
 
 def route(
         request_method, path: str, status_code: int,
